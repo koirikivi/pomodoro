@@ -5,7 +5,8 @@ import time
 
 
 DEFAULT_POMODORO_TIME = 25 * 60
-DEFAULT_BREAK_TIME = 5 * 60
+DEFAULT_BREAK_TIME = 0 * 60
+DEFAULT_FLASH = False
 
 
 if sys.stdout.isatty():
@@ -18,24 +19,32 @@ else:
         print string
 
 
+def output_time(time_, prefix=""):
+    output("%s%2d:%02d" % (prefix, (time_ / 60), (time_% 60)))
+
+
 def pomodoro(pomodoro_time=DEFAULT_POMODORO_TIME,
-             break_time=DEFAULT_BREAK_TIME):
+             break_time=DEFAULT_BREAK_TIME,
+             flash=DEFAULT_FLASH):
     time_left = pomodoro_time
     while time_left > 0:
-        output("%2d:%02d" % ((time_left / 60), (time_left % 60)))
+        output_time(time_left)
         time_left -= 1
         time.sleep(1)
+    output_time(time_left)
+    output("%2d:%02d" % ((time_left / 60), (time_left % 60)))
     time_left = break_time
     while time_left > 0:
-        output("BREAK %2d:%02d"
-               % ((time_left / 60), (time_left % 60)))
+        output_time(time_left, prefix="BREAK ")
         time_left -= 1
         time.sleep(1)
-    for _ in range(3):
-        output("                  ")
-        time.sleep(0.5)
-        output("****   DONE   ****")
-        time.sleep(0.5)
+    output_time(time_left, prefix="BREAK ")
+    if flash:
+        for _ in range(3):
+            output("                  ")
+            time.sleep(0.5)
+            output("****   DONE   ****")
+            time.sleep(0.5)
     print("")
 
 
@@ -76,6 +85,10 @@ def parse_time(string):
     return int(time_str) * multiplier
 
 
+def parse_bool(string):
+    return string.lower().strip() in ('1', 't', 'true')
+
+
 def main():
     if get_index(sys.argv, 1, "").endswith("help"):
         print("USAGE: %s [--help] [time] [break_time]"
@@ -85,8 +98,11 @@ def main():
             sys.argv, 1, DEFAULT_POMODORO_TIME))
     break_time = parse_time(get_index(
             sys.argv, 2, DEFAULT_BREAK_TIME))
+    flash = parse_bool(get_index(
+            sys.argv, 3, "t" if DEFAULT_FLASH else "f"))
     pomodoro(pomodoro_time=pomodoro_time,
-             break_time=break_time)
+             break_time=break_time,
+             flash=flash)
 
 
 if __name__ == "__main__":
