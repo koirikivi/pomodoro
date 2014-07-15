@@ -23,28 +23,32 @@ def output_time(time_, prefix=""):
     output("%s%2d:%02d" % (prefix, (time_ / 60), (time_% 60)))
 
 
+def pomodoro_round(time_, prefix=""):
+    time_left = time_
+    while time_left > 0:
+        output_time(time_left, prefix=prefix)
+        time_left -= 1
+        time.sleep(1)
+    output_time(time_left, prefix=prefix)
+
+
+def flash_animation():
+    for _ in range(3):
+        output("                  ")
+        time.sleep(0.5)
+        output("****   DONE   ****")
+        time.sleep(0.5)
+
+
 def pomodoro(pomodoro_time=DEFAULT_POMODORO_TIME,
              break_time=DEFAULT_BREAK_TIME,
              flash=DEFAULT_FLASH):
-    time_left = pomodoro_time
-    while time_left > 0:
-        output_time(time_left)
-        time_left -= 1
-        time.sleep(1)
-    output_time(time_left)
-    output("%2d:%02d" % ((time_left / 60), (time_left % 60)))
-    time_left = break_time
-    while time_left > 0:
-        output_time(time_left, prefix="BREAK ")
-        time_left -= 1
-        time.sleep(1)
-    output_time(time_left, prefix="BREAK ")
+    if pomodoro_time:
+        pomodoro_round(pomodoro_time)
+    if break_time:
+        pomodoro_round(break_time, prefix="BREAK ")
     if flash:
-        for _ in range(3):
-            output("                  ")
-            time.sleep(0.5)
-            output("****   DONE   ****")
-            time.sleep(0.5)
+        flash_animation()
     print("")
 
 
@@ -91,7 +95,7 @@ def parse_bool(string):
 
 def main():
     if get_index(sys.argv, 1, "").endswith("help"):
-        print("USAGE: %s [--help] [time] [break_time]"
+        print("USAGE: %s [--help] [time] [break_time] [flash?]"
               % sys.argv[0])
         return 0
     pomodoro_time = parse_time(get_index(
