@@ -15,6 +15,9 @@ See http://espeak.sourceforge.net/ and https://github.com/koirikivi/dash for
 example programs.
 
 ```bash
-$ pomodoro && espeak "BREAK TIME"  # alert after
-$ dash start sometask && pomodoro && dash end
+$ pomodoro && espeak "BREAK TIME"  # alert after the 'pomodoro' is finished
+$ dash start sometask && pomodoro && dash end  # work on a task for a pomodoro
 ```
+
+See http://pomodorotechnique.com/ for more information about the Pomodoro
+technique.
