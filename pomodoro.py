@@ -9,18 +9,16 @@ DEFAULT_BREAK_TIME = 0 * 60
 DEFAULT_FLASH = False
 
 
-if sys.stdout.isatty():
-    def output(string):
-        string = "\r%s" % string
-        sys.stdout.write(string)
-        sys.stdout.flush()
-else:
-    def output(string):
-        print string
-
-
-def output_time(time_, prefix=""):
-    output("%s%2d:%02d" % (prefix, (time_ / 60), (time_% 60)))
+def pomodoro(pomodoro_time=DEFAULT_POMODORO_TIME,
+             break_time=DEFAULT_BREAK_TIME,
+             flash=DEFAULT_FLASH):
+    if pomodoro_time:
+        pomodoro_round(pomodoro_time)
+    if break_time:
+        pomodoro_round(break_time, prefix="BREAK ")
+    if flash:
+        flash_animation()
+    print("")
 
 
 def pomodoro_round(time_, prefix=""):
@@ -40,16 +38,18 @@ def flash_animation():
         time.sleep(0.5)
 
 
-def pomodoro(pomodoro_time=DEFAULT_POMODORO_TIME,
-             break_time=DEFAULT_BREAK_TIME,
-             flash=DEFAULT_FLASH):
-    if pomodoro_time:
-        pomodoro_round(pomodoro_time)
-    if break_time:
-        pomodoro_round(break_time, prefix="BREAK ")
-    if flash:
-        flash_animation()
-    print("")
+def output_time(time_, prefix=""):
+    output("%s%2d:%02d" % (prefix, (time_ / 60), (time_% 60)))
+
+
+if sys.stdout.isatty():
+    def output(string):
+        string = "\r%s" % string
+        sys.stdout.write(string)
+        sys.stdout.flush()
+else:
+    def output(string):
+        print string
 
 
 def get_index(indexable, index, default=None):
